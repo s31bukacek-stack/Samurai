@@ -34,7 +34,7 @@ export const CONFIG = {
 
   // Vizuální efekty.
   effects: {
-    afterimage: { duration: 0.40, alpha: 0.55, fade: 1.3 },  // rozmazání při dvojitém skoku
+    afterimage: { duration: 0.32, alpha: 0.40, fade: 1.7 },  // rozmazání při dvojitém skoku
   },
 
   camera: {
