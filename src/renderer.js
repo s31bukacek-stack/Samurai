@@ -95,16 +95,38 @@ export function createRenderer(ctx, assets) {
       player.frameIndex, player.x + player.width / 2, player.y, player.direction, 1,
     );
 
-    // Náznak švihu ve směru seku (ukazuje, kam sekáš).
+    const aimO = camera.worldToScreen(player.x + player.width / 2, player.y - 50);
+
+    // Čára míření — pořád viditelná (myš), ukazuje zvolený úhel odrazu.
+    {
+      const len = 170;
+      const tx = aimO.x + player.aimX * len, ty = aimO.y + player.aimY * len;
+      ctx.save();
+      // tmavý podklad pro kontrast
+      ctx.strokeStyle = 'rgba(0,0,0,0.4)';
+      ctx.lineWidth = 5;
+      ctx.beginPath(); ctx.moveTo(aimO.x, aimO.y); ctx.lineTo(tx, ty); ctx.stroke();
+      // jasná čára
+      ctx.strokeStyle = 'rgba(255,224,150,0.95)';
+      ctx.lineWidth = 2.5;
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath(); ctx.moveTo(aimO.x, aimO.y); ctx.lineTo(tx, ty); ctx.stroke();
+      ctx.setLineDash([]);
+      // špička (kam odpálím)
+      ctx.fillStyle = 'rgba(255,224,150,1)';
+      ctx.beginPath(); ctx.arc(tx, ty, 4, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+    }
+
+    // Náznak švihu při seku (oblouk ve směru seku).
     if (player.isAttacking) {
-      const s = camera.worldToScreen(player.x + player.width / 2, player.y - 50);
       const ang = Math.atan2(player.attackAimY, player.attackAimX);
       ctx.save();
-      ctx.strokeStyle = 'rgba(255,255,255,0.75)';
+      ctx.strokeStyle = 'rgba(255,255,255,0.8)';
       ctx.lineWidth = 5;
       ctx.lineCap = 'round';
       ctx.beginPath();
-      ctx.arc(s.x, s.y, 50, ang - 0.55, ang + 0.55);
+      ctx.arc(aimO.x, aimO.y, 52, ang - 0.55, ang + 0.55);
       ctx.stroke();
       ctx.restore();
     }

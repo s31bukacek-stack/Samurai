@@ -43,12 +43,13 @@ export const CONFIG = {
 
   // Nepřátelé — létající dušíci, neškodní, jen na odpálení mečem.
   enemies: {
-    count: 7,
-    speed: 105,         // rychlost přiletu k hráči (px/s)
-    spawnDist: 520,     // z jaké dálky přiletují (kolem hráče, všechny strany)
+    count: 6,
+    speed: 42,          // pomalý přílet k hráči (px/s) — čas na zamíření
+    spawnDist: 540,     // z jaké dálky přiletují (kolem hráče, všechny strany)
     bobAmp: 6,          // jemné houpání
-    hitRadius: 92,      // dosah seku kolem hráče (všechny strany)
-    knockSpeed: 480,    // rychlost odpálení (ve směru od hráče k nepříteli)
+    hitRadius: 100,     // dosah seku kolem hráče
+    knockSpeed: 620,    // rychlost odpálení ve zvoleném úhlu
+    knockGravity: 240,  // mírná gravitace na odpálené (čistá, jen lehce klesající linka)
   },
 
   // Vizuální efekty.

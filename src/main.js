@@ -16,7 +16,7 @@ async function boot() {
 
   const assets = await loadAssets();
   const player = createPlayer();
-  const input = createInput(player);
+  const input = createInput(player, canvas);
   const camera = createCamera(CONFIG);
   const leaves = createLeaves(assets.leaf);
   const enemies = createEnemies(assets.spirit);
@@ -29,8 +29,12 @@ async function boot() {
     const dtMs = Math.min(now - last, 50); // strop proti skokům
     last = now;
 
-    const aim = input.aim();
-    player.update(input.moveDirection(), dtMs, LEVEL, input.isAttackHeld(), aim.x, aim.y);
+    // Úhel míření = od hráče (na plátně) k myši.
+    const m = input.mouse();
+    const ps = camera.worldToScreen(player.x + player.width / 2, player.y - 50);
+    const aimX = m.active ? m.x - ps.x : player.direction;
+    const aimY = m.active ? m.y - ps.y : 0;
+    player.update(input.moveDirection(), dtMs, LEVEL, input.isAttackHeld(), aimX, aimY);
     camera.follow(player, CONFIG.world);
     leaves.update(dtMs, camera, player);
     enemies.update(dtMs, player);
