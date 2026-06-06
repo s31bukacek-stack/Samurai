@@ -18,9 +18,38 @@ export function createRenderer(ctx, assets) {
     const tileW = bg.width * (drawH / bg.height);
     const groundScreenY = camera.worldToScreen(0, level.groundY).y;
     const topY = groundScreenY - CONFIG.background.surfaceFraction * drawH;
+
+    // Obloha nad stromy — měsíc + vzdálené koruny (za namalovanou scénou).
+    drawSkyDecor(camera, topY);
+
     const offset = -(camera.x * CONFIG.background.parallax) % tileW;
     for (let x = offset - tileW; x < CONFIG.canvas.width; x += tileW) {
       ctx.drawImage(bg, x, topY, tileW, drawH);
+    }
+  }
+
+  // Měsíc a vzdálené koruny v obloze nad stromy (pomalý parallax, za scénou).
+  function drawSkyDecor(camera, previewTopY) {
+    const W = CONFIG.canvas.width;
+    // Vzdálené koruny — spodní hrana lehce zapuštěná pod vršek namalované scény.
+    const can = assets.canopy;
+    if (can && can.complete) {
+      const cy = previewTopY + 24 - can.height;
+      const off = -(camera.x * 0.25) % can.width;
+      for (let x = off - can.width; x < W + can.width; x += can.width) {
+        ctx.drawImage(can, x, cy);
+      }
+    }
+    // Měsíc — velmi pomalý parallax, opakování po velké vzdálenosti.
+    const moon = assets.moon;
+    if (moon && moon.complete) {
+      const spacing = 1700;
+      const my = previewTopY - 64;
+      const base = 420 - camera.x * 0.08; // posun + pomalý drift
+      const start = ((base % spacing) + spacing) % spacing;
+      for (let x = start - spacing; x < W + spacing; x += spacing) {
+        ctx.drawImage(moon, x, my);
+      }
     }
   }
 
