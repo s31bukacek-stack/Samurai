@@ -42,7 +42,8 @@ export const CONFIG = {
 
   // Vizuální efekty.
   effects: {
-    afterimage: { duration: 0.60, alpha: 0.40, fade: 0.9 },  // rozmazání při dvojitém skoku (delší ocas)
+    afterimage: { duration: 0.60, alpha: 0.40, fade: 0.9 },   // rozmazání při dvojitém skoku (delší ocas)
+    attackAfterimage: { alpha: 0.22, fade: 2.4 },             // stín při (drženém) sekání — mírnější, kratší
   },
 
   camera: {

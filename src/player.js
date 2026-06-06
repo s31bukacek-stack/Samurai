@@ -45,22 +45,34 @@ export function createPlayer() {
       }
     },
 
+    // Přidá jeden „stín" (mizející kopii) s danou průhledností a rychlostí mizení.
+    spawnGhost(alpha, fade) {
+      this.afterimages.push({
+        wx: this.x + this.width / 2,
+        wy: this.y,
+        state: playerState(this),
+        frame: Math.floor(this.frameIndex),
+        dir: this.direction,
+        alpha,
+        fade,
+      });
+    },
+
     // Mizející kopie spritu za postavou.
-    updateAfterimages(dt) {
-      const a = CONFIG.effects.afterimage;
-      for (const g of this.afterimages) g.alpha -= a.fade * dt;
+    updateAfterimages(dt, attackHeld) {
+      for (const g of this.afterimages) g.alpha -= g.fade * dt;
       this.afterimages = this.afterimages.filter(g => g.alpha > 0);
 
+      // Skok (dvojitý) — výrazný delší ocas.
       if (this.afterimageTime > 0) {
         this.afterimageTime -= dt;
-        this.afterimages.push({
-          wx: this.x + this.width / 2,
-          wy: this.y,
-          state: playerState(this),
-          frame: Math.floor(this.frameIndex),
-          dir: this.direction,
-          alpha: a.alpha,
-        });
+        const a = CONFIG.effects.afterimage;
+        this.spawnGhost(a.alpha, a.fade);
+      }
+      // Sekání — jen při delším (drženém) sekání a mírnější efekt.
+      if (this.isAttacking && attackHeld) {
+        const a = CONFIG.effects.attackAfterimage;
+        this.spawnGhost(a.alpha, a.fade);
       }
     },
 
@@ -85,7 +97,7 @@ export function createPlayer() {
       applyGravity(this, dt, CONFIG);
       integrate(this, dt, level, CONFIG);
       updateFrame(this, dtMs);
-      this.updateAfterimages(dt);
+      this.updateAfterimages(dt, attackHeld);
     },
   };
 }
