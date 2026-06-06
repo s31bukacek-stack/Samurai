@@ -12,7 +12,7 @@ export const CONFIG = {
     height: 150,            // kolizní výška
     // Postava zabírá jen výřez snímku (zbytek je průhledné okolí). Velikost
     // i pozici počítáme z TĚLA postavy, ne z celého rámu.
-    charHeight: 20,         // požadovaná výška vykreslené postavy na obrazovce
+    charHeight: 50,         // požadovaná výška vykreslené postavy na obrazovce
     spriteHeadY: 47,        // řádek hlavy v 84px snímku
     spriteFeetY: 81,        // řádek nohou v 84px snímku
     speed: 220,             // px/s
