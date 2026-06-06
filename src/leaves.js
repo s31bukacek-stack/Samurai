@@ -1,22 +1,23 @@
-// Padající podzimní listí v prostoru plátna.
+// Padající podzimní listí v prostoru plátna (sprite leaf.png: 5 lístků po 16×16).
 import { CONFIG } from './config.js';
 
-const COLORS = ['#FF6B35', '#F7931E', '#FFD23F', '#EE4266', '#C73E1D'];
+const FRAME = 16;          // jeden lístek je 16×16 px
+const FRAMES = 5;          // leaf.png má 5 variant vedle sebe
 
-export function createLeaves() {
+export function createLeaves(leafImage) {
   const w = CONFIG.canvas.width, h = CONFIG.canvas.height;
   const leaves = [];
 
   function spawn(initial) {
     return {
       x: Math.random() * w,
-      y: initial ? Math.random() * h : -10,
-      size: 2 + Math.random() * 4,
-      color: COLORS[(Math.random() * COLORS.length) | 0],
+      y: initial ? Math.random() * h : -16,
+      size: 12 + Math.random() * 8,            // velikost vykresleného lístku
+      frame: (Math.random() * FRAMES) | 0,     // která varianta lístku
       vx: -0.5 + Math.random() * 1,
       vy: 0.5 + Math.random() * 1.2,
       rot: Math.random() * Math.PI * 2,
-      vrot: (Math.random() - 0.5) * 0.1,
+      vrot: (Math.random() - 0.5) * 0.08,
     };
   }
 
@@ -27,16 +28,20 @@ export function createLeaves() {
       const k = dtMs / 16;
       for (const l of leaves) {
         l.x += l.vx * k; l.y += l.vy * k; l.rot += l.vrot * k;
-        if (l.y > h + 10) Object.assign(l, spawn(false));
+        if (l.y > h + 16) Object.assign(l, spawn(false));
       }
     },
     draw(ctx) {
+      if (!leafImage || !leafImage.complete) return;
       for (const l of leaves) {
         ctx.save();
         ctx.translate(l.x, l.y);
         ctx.rotate(l.rot);
-        ctx.fillStyle = l.color;
-        ctx.fillRect(-l.size / 2, -l.size / 2, l.size, l.size);
+        ctx.drawImage(
+          leafImage,
+          l.frame * FRAME, 0, FRAME, FRAME,        // výřez z spritesheetu
+          -l.size / 2, -l.size / 2, l.size, l.size, // kam na plátno
+        );
         ctx.restore();
       }
     },

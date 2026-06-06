@@ -17,7 +17,7 @@ async function boot() {
   const player = createPlayer();
   const input = createInput(player);
   const camera = createCamera(CONFIG);
-  const leaves = createLeaves();
+  const leaves = createLeaves(assets.leaf);
   const renderer = createRenderer(ctx, assets);
 
   const state = { camera, level: LEVEL, player, leaves };

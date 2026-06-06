@@ -9,18 +9,20 @@ function loadImage(src) {
 }
 
 export async function loadAssets() {
-  const [idle, run, jump, attack, background, flag] = await Promise.all([
+  const [idle, run, jump, attack, background, flag, leaf] = await Promise.all([
     loadImage('assets/samurai_idle_sprite.png'),
     loadImage('assets/samurai_run_sprite.png'),
     loadImage('assets/samurai_jump_sprite.png'),
     loadImage('assets/samurai_basic_attac.png'),
     loadImage('assets/preview.png'),
     loadImage('assets/Flag.png'),
+    loadImage('assets/leaf.png'),
   ]);
 
   return {
     player: { idle, run, jump, attack },
     background,
     flag,
+    leaf,
   };
 }
