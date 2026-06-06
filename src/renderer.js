@@ -5,23 +5,34 @@ import { currentSprite, totalFrames } from './animations.js';
 export function createRenderer(ctx, assets) {
   const flagAnim = { frameIndex: 0, timer: 0 };
 
-  function drawBackground(camera) {
-    // Parallax: pozadí jede pomaleji než svět a opakuje se vodorovně.
+  function drawBackground(camera, level) {
+    // Obloha — vyplní prostor nad scénou, když hráč vyskočí vysoko.
+    ctx.fillStyle = '#2b2b42';
+    ctx.fillRect(0, 0, CONFIG.canvas.width, CONFIG.canvas.height);
+
+    // Namalovaná scéna: spodní hrana ukotvená na úroveň země (jede svisle
+    // společně s kamerou), vodorovně parallax + opakování.
     const bg = assets.background;
-    const scale = CONFIG.canvas.height / bg.height;
-    const tileW = bg.width * scale;
+    const drawH = CONFIG.canvas.height;
+    const tileW = bg.width * (drawH / bg.height);
+    const groundScreenY = camera.worldToScreen(0, level.groundY).y;
+    const topY = groundScreenY - drawH;
     const offset = -(camera.x * CONFIG.background.parallax) % tileW;
     for (let x = offset - tileW; x < CONFIG.canvas.width; x += tileW) {
-      ctx.drawImage(bg, x, 0, tileW, CONFIG.canvas.height);
+      ctx.drawImage(bg, x, topY, tileW, drawH);
+    }
+  }
+
+  function drawGround(camera, level) {
+    // Zemina pod povrchem (jen pod úrovní země, nepřekrývá namalovanou půdu).
+    const gy = camera.worldToScreen(0, level.groundY).y;
+    if (gy < CONFIG.canvas.height) {
+      ctx.fillStyle = '#3a2a18';
+      ctx.fillRect(0, gy, CONFIG.canvas.width, CONFIG.canvas.height - gy);
     }
   }
 
   function drawPlatforms(camera, level) {
-    ctx.fillStyle = '#5b3a1a';
-    // Zem.
-    const g = camera.worldToScreen(0, level.groundY);
-    ctx.fillRect(0, g.y, CONFIG.canvas.width, CONFIG.canvas.height - g.y);
-    // Plošiny.
     for (const p of level.platforms) {
       const s = camera.worldToScreen(p.x, p.y);
       ctx.fillStyle = '#6b4423';
@@ -83,7 +94,8 @@ export function createRenderer(ctx, assets) {
     render(state, dtMs) {
       const { camera, level, player, leaves } = state;
       ctx.clearRect(0, 0, CONFIG.canvas.width, CONFIG.canvas.height);
-      drawBackground(camera);
+      drawBackground(camera, level);
+      drawGround(camera, level);
       drawPlatforms(camera, level);
       drawPlayer(camera, player);
       drawFlag(camera, level, dtMs);
