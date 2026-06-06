@@ -45,26 +45,25 @@ export function createRenderer(ctx, assets) {
     }
   }
 
-  function drawPlayer(camera, player) {
-    const sprite = currentSprite(player, assets);
+  // Vykreslí jeden snímek postavy (sdílené pro hráče i mizející „duchy").
+  // wx = střed postavy ve světě, wy = pata; měřítko/pozice podle těla postavy.
+  function drawCharacter(camera, sprite, frames, frameIndex, wx, wy, dir, alpha) {
     if (!sprite || !sprite.complete) return;
-    const frames = totalFrames(player);
     const fw = sprite.width / frames;
     const fh = sprite.height;
-    const idx = Math.floor(player.frameIndex) % frames;
+    const idx = ((Math.floor(frameIndex) % frames) + frames) % frames;
 
-    // Měřítko podle TĚLA postavy (ne celého rámu) → správná velikost.
     const p = CONFIG.player;
     const scale = p.charHeight / (p.spriteFeetY - p.spriteHeadY);
     const drawW = fw * scale;
     const drawH = fh * scale;
-    // Nohy postavy (řádek spriteFeetY) přesně na úroveň země.
-    const feet = camera.worldToScreen(player.x + player.width / 2, player.y);
+    const feet = camera.worldToScreen(wx, wy);
     const dx = feet.x - drawW / 2;
     const dy = feet.y - p.spriteFeetY * scale;
 
     ctx.save();
-    if (player.direction === -1) {
+    ctx.globalAlpha = alpha;
+    if (dir === -1) {
       ctx.translate(dx + drawW, dy);
       ctx.scale(-1, 1);
       ctx.drawImage(sprite, idx * fw, 0, fw, fh, 0, 0, drawW, drawH);
@@ -72,6 +71,21 @@ export function createRenderer(ctx, assets) {
       ctx.drawImage(sprite, idx * fw, 0, fw, fh, dx, dy, drawW, drawH);
     }
     ctx.restore();
+  }
+
+  function drawPlayer(camera, player) {
+    // Mizející „duchové" za postavou (rozmazaný efekt po dvojitém skoku).
+    for (const g of player.afterimages) {
+      drawCharacter(
+        camera, assets.player[g.state], CONFIG.animation.totalFrames[g.state],
+        g.frame, g.wx, g.wy, g.dir, g.alpha,
+      );
+    }
+    // Samotná postava.
+    drawCharacter(
+      camera, currentSprite(player, assets), totalFrames(player),
+      player.frameIndex, player.x + player.width / 2, player.y, player.direction, 1,
+    );
   }
 
   function drawFlag(camera, level, dtMs) {

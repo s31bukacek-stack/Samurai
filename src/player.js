@@ -1,7 +1,7 @@
 // Hráč: stav + jeden krok aktualizace. Spojuje vstup, fyziku a animaci.
 import { CONFIG } from './config.js';
-import { applyGravity, applyNinjaEffect, integrate } from './physics.js';
-import { updateFrame } from './animations.js';
+import { applyGravity, integrate } from './physics.js';
+import { updateFrame, playerState } from './animations.js';
 
 export function createPlayer() {
   const p = CONFIG.player;
@@ -20,6 +20,9 @@ export function createPlayer() {
     frameIndex: 0,
     frameTimer: 0,
 
+    afterimageTime: 0,   // jak dlouho ještě emitovat „duchy" (po dvojitém skoku)
+    afterimages: [],     // mizející kopie spritu (rozmazaný efekt)
+
     // Skok ze země nebo dvojitý skok ve vzduchu.
     tryJump() {
       if (!this.isJumping) {
@@ -30,30 +33,55 @@ export function createPlayer() {
       } else if (this.canDoubleJump) {
         this.yVelocity = CONFIG.player.doubleJumpStrength;
         this.canDoubleJump = false;
+        this.afterimageTime = CONFIG.effects.afterimage.duration;  // spusť rozmazání
       }
     },
 
+    // Útok jde i ve vzduchu a za běhu (akčnější pocit).
     attack() {
-      if (!this.isAttacking && !this.isJumping) {
+      if (!this.isAttacking) {
         this.isAttacking = true;
         this.frameIndex = 0;
+      }
+    },
+
+    // Mizející kopie spritu za postavou.
+    updateAfterimages(dt) {
+      const a = CONFIG.effects.afterimage;
+      for (const g of this.afterimages) g.alpha -= a.fade * dt;
+      this.afterimages = this.afterimages.filter(g => g.alpha > 0);
+
+      if (this.afterimageTime > 0) {
+        this.afterimageTime -= dt;
+        this.afterimages.push({
+          wx: this.x + this.width / 2,
+          wy: this.y,
+          state: playerState(this),
+          frame: Math.floor(this.frameIndex),
+          dir: this.direction,
+          alpha: a.alpha,
+        });
       }
     },
 
     // dirX: -1/0/1 z inputu; dtMs delta v ms.
     update(dirX, dtMs, level) {
       const dt = dtMs / 1000;
+      const cfg = CONFIG.player;
 
-      this.moving = dirX !== 0 && !this.isAttacking;
-      if (this.moving) {
-        this.xVelocity = dirX * CONFIG.player.speed;
-        this.direction = dirX;
-      }
+      this.moving = dirX !== 0;
+      if (dirX !== 0) this.direction = dirX;
 
-      applyNinjaEffect(this, dt, CONFIG);
+      // Plynulé zrychlení/zpomalení k cílové rychlosti (měkký, ale svižný pocit).
+      const target = dirX * cfg.speed;
+      const rate = (dirX !== 0 ? cfg.accel : cfg.deceleration) * dt;
+      if (this.xVelocity < target) this.xVelocity = Math.min(target, this.xVelocity + rate);
+      else if (this.xVelocity > target) this.xVelocity = Math.max(target, this.xVelocity - rate);
+
       applyGravity(this, dt, CONFIG);
       integrate(this, dt, level, CONFIG);
       updateFrame(this, dtMs);
+      this.updateAfterimages(dt);
     },
   };
 }

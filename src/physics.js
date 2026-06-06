@@ -3,18 +3,12 @@
 export function lerp(a, b, t) { return a * (1 - t) + b * t; }
 
 export function applyGravity(e, dt, config) {
-  e.yVelocity += config.player.gravity * dt;
+  // Při pádu (yVelocity > 0) působí silnější gravitace → svižnější skok.
+  const mult = (e.yVelocity > 0 && config.player.fallGravityMult) ? config.player.fallGravityMult : 1;
+  e.yVelocity += config.player.gravity * mult * dt;
   if (e.yVelocity > config.player.maxFallVelocity) {
     e.yVelocity = config.player.maxFallVelocity;
   }
-}
-
-// Ninja dobržďování: když se entita nemá hýbat, plynně zpomal do nuly.
-export function applyNinjaEffect(e, dt, config) {
-  if (e.moving || e.xVelocity === 0) return;
-  const dec = config.player.deceleration * dt;
-  if (e.xVelocity > 0) e.xVelocity = Math.max(0, e.xVelocity - dec);
-  else e.xVelocity = Math.min(0, e.xVelocity + dec);
 }
 
 // Posuň entitu a vyřeš kolize (zem + vršky plošin) a hranice světa.

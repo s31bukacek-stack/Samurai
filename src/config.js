@@ -15,19 +15,26 @@ export const CONFIG = {
     charHeight: 50,         // požadovaná výška vykreslené postavy na obrazovce
     spriteHeadY: 47,        // řádek hlavy v 84px snímku
     spriteFeetY: 81,        // řádek nohou v 84px snímku
-    speed: 220,             // px/s
-    deceleration: 600,      // ninja dobržďování px/s²
-    jumpStrength: -620,     // počáteční rychlost skoku (nahoru = záporné)
-    doubleJumpStrength: -560,
+    speed: 270,             // px/s (svižnější)
+    accel: 2800,            // zrychlení k cílové rychlosti px/s² (rychlý, ale měkký rozjezd)
+    deceleration: 2000,     // zpomalení po puštění px/s² (svižné, ale plynulé zastavení)
+    jumpStrength: -580,     // počáteční rychlost skoku (nahoru = záporné)
+    doubleJumpStrength: -540,
     gravity: 1500,
-    maxFallVelocity: 1300,
+    fallGravityMult: 1.45,  // pád je rychlejší než výstup → svižnější skok
+    maxFallVelocity: 1400,
   },
 
   // Kolik snímků má každý spritesheet (snímky jsou vedle sebe v jedné řadě).
   animation: {
-    frameDuration: { idle: 1000 / 6, run: 1000 / 12, jump: 1000 / 8, attack: 1000 / 8 },
+    frameDuration: { idle: 1000 / 6, run: 1000 / 16, jump: 1000 / 8, attack: 1000 / 14 },
     totalFrames: { idle: 4, run: 8, jump: 3, attack: 5 },
     flag: { frameDuration: 1000 / 4, totalFrames: 6 },
+  },
+
+  // Vizuální efekty.
+  effects: {
+    afterimage: { duration: 0.40, alpha: 0.55, fade: 1.3 },  // rozmazání při dvojitém skoku
   },
 
   camera: {
