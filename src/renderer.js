@@ -28,18 +28,9 @@ export function createRenderer(ctx, assets) {
     }
   }
 
-  // Měsíc a vzdálené koruny v obloze nad stromy (pomalý parallax, za scénou).
+  // Měsíc v obloze nad stromy (pomalý parallax, za scénou).
   function drawSkyDecor(camera, previewTopY) {
     const W = CONFIG.canvas.width;
-    // Vzdálené koruny — spodní hrana lehce zapuštěná pod vršek namalované scény.
-    const can = assets.canopy;
-    if (can && can.complete) {
-      const cy = previewTopY + 24 - can.height;
-      const off = -(camera.x * 0.25) % can.width;
-      for (let x = off - can.width; x < W + can.width; x += can.width) {
-        ctx.drawImage(can, x, cy);
-      }
-    }
     // Měsíc — velmi pomalý parallax, opakování po velké vzdálenosti.
     const moon = assets.moon;
     if (moon && moon.complete) {
@@ -68,35 +59,16 @@ export function createRenderer(ctx, assets) {
     const cfg = CONFIG.platforms;
     const T = cfg.tile;
     const ts = assets.tileset;
-    const dirt = assets.dirt;
-    if (!ts || !ts.complete || !dirt || !dirt.complete) return;
-    const D = dirt.width;
+    if (!ts || !ts.complete) return;
 
     for (const p of level.platforms) {
       const s0 = camera.worldToScreen(p.x, p.y);
       const cols = Math.ceil(p.width / T);
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.rect(s0.x, s0.y, p.width, cfg.height);
-      ctx.clip();
-
-      // 1) Tráva navrch (dlaždice z tilesetu).
+      // Jen horní řada dlaždice s trávou z tilesetu (1 dlaždice vysoká).
       for (let c = 0; c < cols; c++) {
         const [tx, ty] = cfg.grassTiles[c % cfg.grassTiles.length];
         ctx.drawImage(ts, tx * T, ty * T, T, T, s0.x + c * T, s0.y, T, T);
       }
-      // 2) Bezešvá textura hlíny přes tělo (překryje spodní spárovou část trávy).
-      for (let y = s0.y + cfg.grassPx; y < s0.y + cfg.height; y += D) {
-        for (let x = s0.x; x < s0.x + p.width; x += D) {
-          ctx.drawImage(dirt, x, y);
-        }
-      }
-      ctx.restore();
-
-      // 3) Tmavá spodní hrana pro hloubku.
-      ctx.fillStyle = cfg.dirtEdge;
-      ctx.fillRect(s0.x, s0.y + cfg.height - 6, p.width, 6);
     }
   }
 

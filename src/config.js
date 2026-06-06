@@ -33,14 +33,10 @@ export const CONFIG = {
     flag: { frameDuration: 1000 / 4, totalFrames: 6 },
   },
 
-  // Plošiny: tráva z tileset.png (32px) navrch + vlastní BEZEŠVÁ textura hlíny
-  // (dirt.png — hroudy přetékají přes okraje, žádné tmavé spáry).
+  // Plošiny: výhradně z tileset.png — jen horní řada s trávou (1 dlaždice = 32px).
   platforms: {
     tile: 32,
-    grassPx: 13,                   // výška viditelné trávy (pod ní začíná textura hlíny)
-    height: 58,                    // celková výška plošiny (px)
     grassTiles: [[2, 0], [3, 0]],  // vrchní řada (tráva, kde se stojí) — střídání proti opakování
-    dirtEdge: '#30201a',           // tmavá spodní hrana pro hloubku
   },
 
   // Vizuální efekty.
