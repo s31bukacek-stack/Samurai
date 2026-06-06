@@ -94,6 +94,20 @@ export function createRenderer(ctx, assets) {
       camera, currentSprite(player, assets), totalFrames(player),
       player.frameIndex, player.x + player.width / 2, player.y, player.direction, 1,
     );
+
+    // Náznak švihu ve směru seku (ukazuje, kam sekáš).
+    if (player.isAttacking) {
+      const s = camera.worldToScreen(player.x + player.width / 2, player.y - 50);
+      const ang = Math.atan2(player.attackAimY, player.attackAimX);
+      ctx.save();
+      ctx.strokeStyle = 'rgba(255,255,255,0.75)';
+      ctx.lineWidth = 5;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, 50, ang - 0.55, ang + 0.55);
+      ctx.stroke();
+      ctx.restore();
+    }
   }
 
   function drawFlag(camera, level, dtMs) {

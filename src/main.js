@@ -29,7 +29,8 @@ async function boot() {
     const dtMs = Math.min(now - last, 50); // strop proti skokům
     last = now;
 
-    player.update(input.moveDirection(), dtMs, LEVEL, input.isAttackHeld());
+    const aim = input.aim();
+    player.update(input.moveDirection(), dtMs, LEVEL, input.isAttackHeld(), aim.x, aim.y);
     camera.follow(player, CONFIG.world);
     leaves.update(dtMs, camera, player);
     enemies.update(dtMs, player);

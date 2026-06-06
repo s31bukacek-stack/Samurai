@@ -5,6 +5,7 @@ export function createInput(player) {
   function onKeyDown(e) {
     keys[e.code] = true;
     if (e.code === 'Space') { e.preventDefault(); player.tryJump(); }
+    if (e.code.startsWith('Arrow')) e.preventDefault(); // ať nescrolluje stránka
     if (e.code === 'KeyA') player.attack();
   }
   function onKeyUp(e) { keys[e.code] = false; }
@@ -22,5 +23,12 @@ export function createInput(player) {
     },
     isJumpHeld() { return !!keys.Space; },
     isAttackHeld() { return !!keys.KeyA; },
+    // Míření seku z šipek: x = vpravo−vlevo, y = dolů−nahoru.
+    aim() {
+      return {
+        x: (keys.ArrowRight ? 1 : 0) - (keys.ArrowLeft ? 1 : 0),
+        y: (keys.ArrowDown ? 1 : 0) - (keys.ArrowUp ? 1 : 0),
+      };
+    },
   };
 }

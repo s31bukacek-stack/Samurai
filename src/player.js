@@ -23,6 +23,9 @@ export function createPlayer() {
     afterimageTime: 0,   // jak dlouho ještě emitovat „duchy" (po dvojitém skoku)
     afterimages: [],     // mizející kopie spritu (rozmazaný efekt)
 
+    aimX: 1, aimY: 0,            // aktuální směr míření seku (z šipek / pohledu)
+    attackAimX: 1, attackAimY: 0, // směr zafixovaný při zahájení seku
+
     // Skok ze země nebo dvojitý skok ve vzduchu.
     tryJump() {
       if (!this.isJumping) {
@@ -42,6 +45,9 @@ export function createPlayer() {
       if (!this.isAttacking) {
         this.isAttacking = true;
         this.frameIndex = 0;
+        // Zafixuj směr seku podle aktuálního míření.
+        this.attackAimX = this.aimX;
+        this.attackAimY = this.aimY;
         // Sek ve vzduchu postavu malinko strčí zpět (odpor).
         if (this.isJumping) this.xVelocity = -this.direction * CONFIG.player.airAttackRecoil;
       }
@@ -78,10 +84,17 @@ export function createPlayer() {
       }
     },
 
-    // dirX: -1/0/1 z inputu; dtMs delta v ms; attackHeld: drží se útok?
-    update(dirX, dtMs, level, attackHeld) {
+    // dirX: -1/0/1; dtMs delta v ms; attackHeld: drží se útok?; aimX/aimY: míření z šipek.
+    update(dirX, dtMs, level, attackHeld, aimX = 0, aimY = 0) {
       const dt = dtMs / 1000;
       const cfg = CONFIG.player;
+
+      // Aktuální směr míření seku — z šipek; když nic, tak směr pohledu.
+      let ax = aimX, ay = aimY;
+      if (ax === 0 && ay === 0) { ax = this.direction; ay = 0; }
+      const am = Math.hypot(ax, ay) || 1;
+      this.aimX = ax / am;
+      this.aimY = ay / am;
 
       // Dynamické sekání: držením útoku sekej plynule za sebou
       // (jakmile jeden sek doběhne, hned začne další).
