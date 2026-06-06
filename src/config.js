@@ -10,7 +10,11 @@ export const CONFIG = {
     startY: 600,            // pata hráče (y roste dolů)
     width: 100,             // kolizní šířka
     height: 150,            // kolizní výška
-    drawHeight: 150,        // výška vykresleného spritu (šířka se dopočítá z poměru snímku, ať není zkreslený)
+    // Postava zabírá jen výřez snímku (zbytek je průhledné okolí). Velikost
+    // i pozici počítáme z TĚLA postavy, ne z celého rámu.
+    charHeight: 78,         // požadovaná výška vykreslené postavy na obrazovce
+    spriteHeadY: 47,        // řádek hlavy v 84px snímku
+    spriteFeetY: 81,        // řádek nohou v 84px snímku
     speed: 220,             // px/s
     deceleration: 600,      // ninja dobržďování px/s²
     jumpStrength: -620,     // počáteční rychlost skoku (nahoru = záporné)

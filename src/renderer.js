@@ -53,12 +53,15 @@ export function createRenderer(ctx, assets) {
     const fh = sprite.height;
     const idx = Math.floor(player.frameIndex) % frames;
 
-    // Vykreslení v poměru snímku (ať není postava roztažená), pata na zemi.
-    const drawH = CONFIG.player.drawHeight;
-    const drawW = drawH * (fw / fh);
+    // Měřítko podle TĚLA postavy (ne celého rámu) → správná velikost.
+    const p = CONFIG.player;
+    const scale = p.charHeight / (p.spriteFeetY - p.spriteHeadY);
+    const drawW = fw * scale;
+    const drawH = fh * scale;
+    // Nohy postavy (řádek spriteFeetY) přesně na úroveň země.
     const feet = camera.worldToScreen(player.x + player.width / 2, player.y);
     const dx = feet.x - drawW / 2;
-    const dy = feet.y - drawH;
+    const dy = feet.y - p.spriteFeetY * scale;
 
     ctx.save();
     if (player.direction === -1) {
