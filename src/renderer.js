@@ -45,18 +45,10 @@ export function createRenderer(ctx, assets) {
     for (const p of level.platforms) {
       const s0 = camera.worldToScreen(p.x, p.y);
       const cols = Math.ceil(p.width / T);
-      // Tělo vede až k zemi → sloup/mesa spojená se zemí, žádné plovoucí ostrůvky.
-      const rows = Math.max(1, Math.ceil((level.groundY - p.y) / T));
+      // Jedna dlaždice s trávou (1 sprite) — tenká plošina, žádné vysoké sloupy.
       for (let c = 0; c < cols; c++) {
-        const sx = s0.x + c * T;
-        // Tráva navrch.
         const [gx, gy] = cfg.grassTiles[c % cfg.grassTiles.length];
-        ctx.drawImage(ts, gx * T, gy * T, T, T, sx, s0.y, T, T);
-        // Hlína dolů až k zemi.
-        for (let row = 1; row <= rows; row++) {
-          const [dx, dy] = cfg.dirtTiles[(c + row) % cfg.dirtTiles.length];
-          ctx.drawImage(ts, dx * T, dy * T, T, T, sx, s0.y + row * T, T, T);
-        }
+        ctx.drawImage(ts, gx * T, gy * T, T, T, s0.x + c * T, s0.y, T, T);
       }
     }
   }
