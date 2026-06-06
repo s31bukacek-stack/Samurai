@@ -8,7 +8,7 @@ export const CONFIG = {
   player: {
     startX: 100,
     startY: 600,            // pata hráče (y roste dolů)
-    width: 100,             // kolizní šířka
+    width: 44,              // kolizní šířka (≈ šířka vykreslené postavy, aby nevisela přes okraj)
     height: 150,            // kolizní výška
     // Postava zabírá jen výřez snímku (zbytek je průhledné okolí). Velikost
     // i pozici počítáme z TĚLA postavy, ne z celého rámu.
