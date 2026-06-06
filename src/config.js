@@ -23,6 +23,7 @@ export const CONFIG = {
     gravity: 1500,
     fallGravityMult: 1.45,  // pád je rychlejší než výstup → svižnější skok
     maxFallVelocity: 1400,
+    airAttackRecoil: 170,   // při seku ve vzduchu postavu malinko strčí zpět (odpor)
   },
 
   // Kolik snímků má každý spritesheet (snímky jsou vedle sebe v jedné řadě).

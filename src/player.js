@@ -42,6 +42,8 @@ export function createPlayer() {
       if (!this.isAttacking) {
         this.isAttacking = true;
         this.frameIndex = 0;
+        // Sek ve vzduchu postavu malinko strčí zpět (odpor).
+        if (this.isJumping) this.xVelocity = -this.direction * CONFIG.player.airAttackRecoil;
       }
     },
 
