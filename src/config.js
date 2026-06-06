@@ -32,12 +32,15 @@ export const CONFIG = {
     flag: { frameDuration: 1000 / 4, totalFrames: 6 },
   },
 
-  // Plošiny se skládají z dlaždic tileset.png (32px). Souřadnice dlaždic [sloupec,řádek].
+  // Plošiny: bezešvá tráva z tileset.png (32px) navrch + plná hliněná výplň těla
+  // (dlaždice hlíny v sadě mají mezi sebou tmavé spáry, proto tělo kreslíme barvou).
   platforms: {
     tile: 32,
-    rows: 2,                       // tloušťka plošiny v dlaždicích
-    grassTiles: [[2, 0], [3, 0]],  // vrchní řada (tráva, kde se stojí)
-    dirtTiles: [[3, 1], [4, 1]],   // tělo plošiny (hlína)
+    grassPx: 12,                   // výška viditelné trávy (zbytek dlaždice překryje výplň)
+    height: 54,                    // celková výška plošiny (px)
+    grassTiles: [[2, 0], [3, 0]],  // vrchní řada (tráva, kde se stojí) — střídání proti opakování
+    dirtColor: '#552b27',          // plná výplň těla (hlína)
+    dirtDark: '#3b1e1b',           // spodní stín
   },
 
   // Vizuální efekty.

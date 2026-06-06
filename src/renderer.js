@@ -42,16 +42,20 @@ export function createRenderer(ctx, assets) {
     if (!ts || !ts.complete) return;
 
     for (const p of level.platforms) {
+      const s0 = camera.worldToScreen(p.x, p.y);
       const cols = Math.ceil(p.width / T);
+
+      // 1) Tráva navrch (bezešvé dlaždice).
       for (let c = 0; c < cols; c++) {
-        const s = camera.worldToScreen(p.x + c * T, p.y);
-        for (let row = 0; row < cfg.rows; row++) {
-          // vrchní řada = tráva, zbytek = hlína; střídáme dlaždice proti opakování
-          const set = row === 0 ? cfg.grassTiles : cfg.dirtTiles;
-          const [tx, ty] = set[c % set.length];
-          ctx.drawImage(ts, tx * T, ty * T, T, T, s.x, s.y + row * T, T, T);
-        }
+        const [tx, ty] = cfg.grassTiles[c % cfg.grassTiles.length];
+        ctx.drawImage(ts, tx * T, ty * T, T, T, s0.x + c * T, s0.y, T, T);
       }
+      // 2) Plné hliněné tělo pod trávou (překryje hroudovou část dlaždic).
+      ctx.fillStyle = cfg.dirtColor;
+      ctx.fillRect(s0.x, s0.y + cfg.grassPx, p.width, cfg.height - cfg.grassPx);
+      // 3) Tmavší spodní hrana pro hloubku.
+      ctx.fillStyle = cfg.dirtDark;
+      ctx.fillRect(s0.x, s0.y + cfg.height - 6, p.width, 6);
     }
   }
 
