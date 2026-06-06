@@ -12,7 +12,7 @@ export const CONFIG = {
     height: 150,            // kolizní výška
     // Postava zabírá jen výřez snímku (zbytek je průhledné okolí). Velikost
     // i pozici počítáme z TĚLA postavy, ne z celého rámu.
-    charHeight: 78,         // požadovaná výška vykreslené postavy na obrazovce
+    charHeight: 20,         // požadovaná výška vykreslené postavy na obrazovce
     spriteHeadY: 47,        // řádek hlavy v 84px snímku
     spriteFeetY: 81,        // řádek nohou v 84px snímku
     speed: 220,             // px/s
@@ -39,7 +39,7 @@ export const CONFIG = {
 
   // Pozadí preview.png. surfaceFraction = kde v obrázku je povrch trávy
   // (podíl od horní hrany), aby hráč stál na povrchu, ne zapuštěný.
-  background: { parallax: 0.4, surfaceFraction: 0.83 },
+  background: { parallax: 0.4, surfaceFraction: 0.87 },
 
   leaves: {
     count: 45,
