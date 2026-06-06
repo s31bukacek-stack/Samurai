@@ -42,7 +42,7 @@ export const CONFIG = {
 
   // Vizuální efekty.
   effects: {
-    afterimage: { duration: 0.32, alpha: 0.40, fade: 1.7 },  // rozmazání při dvojitém skoku
+    afterimage: { duration: 0.60, alpha: 0.40, fade: 0.9 },  // rozmazání při dvojitém skoku (delší ocas)
   },
 
   camera: {
