@@ -19,16 +19,6 @@ export function createRenderer(ctx, assets) {
     const groundScreenY = camera.worldToScreen(0, level.groundY).y;
     const topY = groundScreenY - CONFIG.background.surfaceFraction * drawH;
 
-    // Koruny stromů s větvemi (světle modré) v horním pozadí — za scénou.
-    const can = assets.canopy;
-    if (can && can.complete) {
-      const cy = topY + 20 - can.height;
-      const off = -(camera.x * 0.3) % can.width;
-      for (let x = off - can.width; x < CONFIG.canvas.width + can.width; x += can.width) {
-        ctx.drawImage(can, x, cy);
-      }
-    }
-
     const offset = -(camera.x * CONFIG.background.parallax) % tileW;
     for (let x = offset - tileW; x < CONFIG.canvas.width; x += tileW) {
       ctx.drawImage(bg, x, topY, tileW, drawH);
