@@ -36,12 +36,22 @@ export function createRenderer(ctx, assets) {
   }
 
   function drawPlatforms(camera, level) {
+    const cfg = CONFIG.platforms;
+    const T = cfg.tile;
+    const ts = assets.tileset;
+    if (!ts || !ts.complete) return;
+
     for (const p of level.platforms) {
-      const s = camera.worldToScreen(p.x, p.y);
-      ctx.fillStyle = '#6b4423';
-      ctx.fillRect(s.x, s.y, p.width, 16);
-      ctx.fillStyle = '#3d2812';
-      ctx.fillRect(s.x, s.y + 16, p.width, 6);
+      const cols = Math.ceil(p.width / T);
+      for (let c = 0; c < cols; c++) {
+        const s = camera.worldToScreen(p.x + c * T, p.y);
+        for (let row = 0; row < cfg.rows; row++) {
+          // vrchní řada = tráva, zbytek = hlína; střídáme dlaždice proti opakování
+          const set = row === 0 ? cfg.grassTiles : cfg.dirtTiles;
+          const [tx, ty] = set[c % set.length];
+          ctx.drawImage(ts, tx * T, ty * T, T, T, s.x, s.y + row * T, T, T);
+        }
+      }
     }
   }
 

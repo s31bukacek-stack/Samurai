@@ -32,6 +32,14 @@ export const CONFIG = {
     flag: { frameDuration: 1000 / 4, totalFrames: 6 },
   },
 
+  // Plošiny se skládají z dlaždic tileset.png (32px). Souřadnice dlaždic [sloupec,řádek].
+  platforms: {
+    tile: 32,
+    rows: 2,                       // tloušťka plošiny v dlaždicích
+    grassTiles: [[2, 0], [3, 0]],  // vrchní řada (tráva, kde se stojí)
+    dirtTiles: [[3, 1], [4, 1]],   // tělo plošiny (hlína)
+  },
+
   // Vizuální efekty.
   effects: {
     afterimage: { duration: 0.32, alpha: 0.40, fade: 1.7 },  // rozmazání při dvojitém skoku
