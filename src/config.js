@@ -33,10 +33,12 @@ export const CONFIG = {
     flag: { frameDuration: 1000 / 4, totalFrames: 6 },
   },
 
-  // Plošiny: výhradně z tileset.png — jen horní řada s trávou (1 dlaždice = 32px).
+  // Plošiny: výhradně z tileset.png — horní řada s trávou + 3 řady hlíny (4 dlaždice).
   platforms: {
     tile: 32,
-    grassTiles: [[2, 0], [3, 0]],  // vrchní řada (tráva, kde se stojí) — střídání proti opakování
+    bodyRows: 3,                   // kolik řad hlíny pod trávou
+    grassTiles: [[2, 0], [3, 0]],  // vrchní řada (tráva, kde se stojí)
+    dirtTiles: [[6, 1], [7, 1]],   // tělo (nejhustší/nejmíň spár v sadě)
   },
 
   // Vizuální efekty.

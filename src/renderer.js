@@ -19,28 +19,9 @@ export function createRenderer(ctx, assets) {
     const groundScreenY = camera.worldToScreen(0, level.groundY).y;
     const topY = groundScreenY - CONFIG.background.surfaceFraction * drawH;
 
-    // Obloha nad stromy — měsíc + vzdálené koruny (za namalovanou scénou).
-    drawSkyDecor(camera, topY);
-
     const offset = -(camera.x * CONFIG.background.parallax) % tileW;
     for (let x = offset - tileW; x < CONFIG.canvas.width; x += tileW) {
       ctx.drawImage(bg, x, topY, tileW, drawH);
-    }
-  }
-
-  // Měsíc v obloze nad stromy (pomalý parallax, za scénou).
-  function drawSkyDecor(camera, previewTopY) {
-    const W = CONFIG.canvas.width;
-    // Měsíc — velmi pomalý parallax, opakování po velké vzdálenosti.
-    const moon = assets.moon;
-    if (moon && moon.complete) {
-      const spacing = 1700;
-      const my = previewTopY - 64;
-      const base = 420 - camera.x * 0.08; // posun + pomalý drift
-      const start = ((base % spacing) + spacing) % spacing;
-      for (let x = start - spacing; x < W + spacing; x += spacing) {
-        ctx.drawImage(moon, x, my);
-      }
     }
   }
 
@@ -64,10 +45,16 @@ export function createRenderer(ctx, assets) {
     for (const p of level.platforms) {
       const s0 = camera.worldToScreen(p.x, p.y);
       const cols = Math.ceil(p.width / T);
-      // Jen horní řada dlaždice s trávou z tilesetu (1 dlaždice vysoká).
       for (let c = 0; c < cols; c++) {
-        const [tx, ty] = cfg.grassTiles[c % cfg.grassTiles.length];
-        ctx.drawImage(ts, tx * T, ty * T, T, T, s0.x + c * T, s0.y, T, T);
+        const sx = s0.x + c * T;
+        // Tráva navrch.
+        const [gx, gy] = cfg.grassTiles[c % cfg.grassTiles.length];
+        ctx.drawImage(ts, gx * T, gy * T, T, T, sx, s0.y, T, T);
+        // Tělo z hlíny (bodyRows řad pod trávou).
+        for (let row = 1; row <= cfg.bodyRows; row++) {
+          const [dx, dy] = cfg.dirtTiles[(c + row) % cfg.dirtTiles.length];
+          ctx.drawImage(ts, dx * T, dy * T, T, T, sx, s0.y + row * T, T, T);
+        }
       }
     }
   }
