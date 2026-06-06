@@ -21,5 +21,6 @@ export function createInput(player) {
       return 0;
     },
     isJumpHeld() { return !!keys.Space; },
+    isAttackHeld() { return !!keys.KeyA; },
   };
 }

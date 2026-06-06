@@ -27,7 +27,7 @@ export const CONFIG = {
 
   // Kolik snímků má každý spritesheet (snímky jsou vedle sebe v jedné řadě).
   animation: {
-    frameDuration: { idle: 1000 / 6, run: 1000 / 16, jump: 1000 / 8, attack: 1000 / 14 },
+    frameDuration: { idle: 1000 / 6, run: 1000 / 16, jump: 1000 / 8, attack: 1000 / 18 },
     totalFrames: { idle: 4, run: 8, jump: 3, attack: 5 },
     flag: { frameDuration: 1000 / 4, totalFrames: 6 },
   },

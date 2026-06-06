@@ -64,10 +64,14 @@ export function createPlayer() {
       }
     },
 
-    // dirX: -1/0/1 z inputu; dtMs delta v ms.
-    update(dirX, dtMs, level) {
+    // dirX: -1/0/1 z inputu; dtMs delta v ms; attackHeld: drží se útok?
+    update(dirX, dtMs, level, attackHeld) {
       const dt = dtMs / 1000;
       const cfg = CONFIG.player;
+
+      // Dynamické sekání: držením útoku sekej plynule za sebou
+      // (jakmile jeden sek doběhne, hned začne další).
+      if (attackHeld && !this.isAttacking) this.attack();
 
       this.moving = dirX !== 0;
       if (dirX !== 0) this.direction = dirX;

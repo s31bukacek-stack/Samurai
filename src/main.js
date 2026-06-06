@@ -27,7 +27,7 @@ async function boot() {
     const dtMs = Math.min(now - last, 50); // strop proti skokům
     last = now;
 
-    player.update(input.moveDirection(), dtMs, LEVEL);
+    player.update(input.moveDirection(), dtMs, LEVEL, input.isAttackHeld());
     camera.follow(player, CONFIG.world);
     leaves.update(dtMs, camera, player);
     renderer.render(state, dtMs);
