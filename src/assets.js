@@ -9,7 +9,7 @@ function loadImage(src) {
 }
 
 export async function loadAssets() {
-  const [idle, run, jump, attack, background, flag, leaf, tileset, moon, canopy] = await Promise.all([
+  const [idle, run, jump, attack, background, flag, leaf, tileset, moon, canopy, dirt] = await Promise.all([
     loadImage('assets/samurai_idle_sprite.png'),
     loadImage('assets/samurai_run_sprite.png'),
     loadImage('assets/samurai_jump_sprite.png'),
@@ -20,6 +20,7 @@ export async function loadAssets() {
     loadImage('assets/tileset.png'),
     loadImage('assets/moon.png'),
     loadImage('assets/canopy.png'),
+    loadImage('assets/dirt.png'),
   ]);
 
   return {
@@ -30,5 +31,6 @@ export async function loadAssets() {
     tileset,
     moon,
     canopy,
+    dirt,
   };
 }

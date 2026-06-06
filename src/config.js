@@ -33,15 +33,14 @@ export const CONFIG = {
     flag: { frameDuration: 1000 / 4, totalFrames: 6 },
   },
 
-  // Plošiny: bezešvá tráva z tileset.png (32px) navrch + plná hliněná výplň těla
-  // (dlaždice hlíny v sadě mají mezi sebou tmavé spáry, proto tělo kreslíme barvou).
+  // Plošiny: tráva z tileset.png (32px) navrch + vlastní BEZEŠVÁ textura hlíny
+  // (dirt.png — hroudy přetékají přes okraje, žádné tmavé spáry).
   platforms: {
     tile: 32,
-    grassPx: 12,                   // výška viditelné trávy (zbytek dlaždice překryje výplň)
-    height: 54,                    // celková výška plošiny (px)
+    grassPx: 13,                   // výška viditelné trávy (pod ní začíná textura hlíny)
+    height: 58,                    // celková výška plošiny (px)
     grassTiles: [[2, 0], [3, 0]],  // vrchní řada (tráva, kde se stojí) — střídání proti opakování
-    dirtColor: '#552b27',          // plná výplň těla (hlína)
-    dirtDark: '#3b1e1b',           // spodní stín
+    dirtEdge: '#30201a',           // tmavá spodní hrana pro hloubku
   },
 
   // Vizuální efekty.
