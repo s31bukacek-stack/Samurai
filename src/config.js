@@ -8,8 +8,9 @@ export const CONFIG = {
   player: {
     startX: 100,
     startY: 600,            // pata hráče (y roste dolů)
-    width: 100,
-    height: 150,
+    width: 100,             // kolizní šířka
+    height: 150,            // kolizní výška
+    drawHeight: 150,        // výška vykresleného spritu (šířka se dopočítá z poměru snímku, ať není zkreslený)
     speed: 220,             // px/s
     deceleration: 600,      // ninja dobržďování px/s²
     jumpStrength: -620,     // počáteční rychlost skoku (nahoru = záporné)
@@ -32,10 +33,18 @@ export const CONFIG = {
     anchorY: 0.6,
   },
 
-  // Pozadí preview.png jako parallax (jede pomaleji než svět).
-  background: { parallax: 0.4 },
+  // Pozadí preview.png. surfaceFraction = kde v obrázku je povrch trávy
+  // (podíl od horní hrany), aby hráč stál na povrchu, ne zapuštěný.
+  background: { parallax: 0.4, surfaceFraction: 0.83 },
 
-  leaves: { count: 50 },
+  leaves: {
+    count: 45,
+    fallSpeed: 28,          // základní rychlost pádu px/s
+    drift: 12,              // boční unášení px/s
+    swayAmp: 22,            // amplituda kymácení do stran (px)
+    pushRadius: 90,         // dosah, kdy postava listí rozhání
+    pushStrength: 320,      // síla rozhánění
+  },
 
   debug: true,
 };

@@ -29,7 +29,7 @@ async function boot() {
 
     player.update(input.moveDirection(), dtMs, LEVEL);
     camera.follow(player, CONFIG.world);
-    leaves.update(dtMs);
+    leaves.update(dtMs, camera, player);
     renderer.render(state, dtMs);
 
     requestAnimationFrame(loop);

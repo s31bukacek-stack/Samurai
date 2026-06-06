@@ -10,13 +10,14 @@ export function createRenderer(ctx, assets) {
     ctx.fillStyle = '#2b2b42';
     ctx.fillRect(0, 0, CONFIG.canvas.width, CONFIG.canvas.height);
 
-    // Namalovaná scéna: spodní hrana ukotvená na úroveň země (jede svisle
-    // společně s kamerou), vodorovně parallax + opakování.
+    // Namalovaná scéna: povrch trávy v obrázku (surfaceFraction) ukotven na
+    // úroveň země, takže hráč stojí NA povrchu. Svisle jede s kamerou,
+    // vodorovně parallax + opakování.
     const bg = assets.background;
     const drawH = CONFIG.canvas.height;
     const tileW = bg.width * (drawH / bg.height);
     const groundScreenY = camera.worldToScreen(0, level.groundY).y;
-    const topY = groundScreenY - drawH;
+    const topY = groundScreenY - CONFIG.background.surfaceFraction * drawH;
     const offset = -(camera.x * CONFIG.background.parallax) % tileW;
     for (let x = offset - tileW; x < CONFIG.canvas.width; x += tileW) {
       ctx.drawImage(bg, x, topY, tileW, drawH);
@@ -24,11 +25,13 @@ export function createRenderer(ctx, assets) {
   }
 
   function drawGround(camera, level) {
-    // Zemina pod povrchem (jen pod úrovní země, nepřekrývá namalovanou půdu).
-    const gy = camera.worldToScreen(0, level.groundY).y;
-    if (gy < CONFIG.canvas.height) {
+    // Zemina až POD spodní hranou namalované scény (aby ji nepřekrývala).
+    const drawH = CONFIG.canvas.height;
+    const groundScreenY = camera.worldToScreen(0, level.groundY).y;
+    const imageBottomY = groundScreenY + (1 - CONFIG.background.surfaceFraction) * drawH;
+    if (imageBottomY < CONFIG.canvas.height) {
       ctx.fillStyle = '#3a2a18';
-      ctx.fillRect(0, gy, CONFIG.canvas.width, CONFIG.canvas.height - gy);
+      ctx.fillRect(0, imageBottomY, CONFIG.canvas.width, CONFIG.canvas.height - imageBottomY);
     }
   }
 
@@ -50,15 +53,20 @@ export function createRenderer(ctx, assets) {
     const fh = sprite.height;
     const idx = Math.floor(player.frameIndex) % frames;
 
-    const s = camera.worldToScreen(player.x, player.y - player.height);
+    // Vykreslení v poměru snímku (ať není postava roztažená), pata na zemi.
+    const drawH = CONFIG.player.drawHeight;
+    const drawW = drawH * (fw / fh);
+    const feet = camera.worldToScreen(player.x + player.width / 2, player.y);
+    const dx = feet.x - drawW / 2;
+    const dy = feet.y - drawH;
 
     ctx.save();
     if (player.direction === -1) {
-      ctx.translate(s.x + player.width, s.y);
+      ctx.translate(dx + drawW, dy);
       ctx.scale(-1, 1);
-      ctx.drawImage(sprite, idx * fw, 0, fw, fh, 0, 0, player.width, player.height);
+      ctx.drawImage(sprite, idx * fw, 0, fw, fh, 0, 0, drawW, drawH);
     } else {
-      ctx.drawImage(sprite, idx * fw, 0, fw, fh, s.x, s.y, player.width, player.height);
+      ctx.drawImage(sprite, idx * fw, 0, fw, fh, dx, dy, drawW, drawH);
     }
     ctx.restore();
   }
@@ -99,7 +107,7 @@ export function createRenderer(ctx, assets) {
       drawPlatforms(camera, level);
       drawPlayer(camera, player);
       drawFlag(camera, level, dtMs);
-      leaves.draw(ctx);
+      leaves.draw(ctx, camera);
       drawDebug(player, camera);
     },
   };

@@ -1,46 +1,79 @@
-// Padající podzimní listí v prostoru plátna (sprite leaf.png: 5 lístků po 16×16).
+// Padající podzimní listí ve SVĚTĚ (ne na plátně) — sprite leaf.png (5 lístků 16×16).
+// Listí přirozeně pomalu padá a kymácí se do stran; postava ho při průchodu rozhání.
 import { CONFIG } from './config.js';
 
 const FRAME = 16;          // jeden lístek je 16×16 px
 const FRAMES = 5;          // leaf.png má 5 variant vedle sebe
 
 export function createLeaves(leafImage) {
-  const w = CONFIG.canvas.width, h = CONFIG.canvas.height;
+  const W = CONFIG.canvas.width, H = CONFIG.canvas.height;
+  const L = CONFIG.leaves;
   const leaves = [];
 
-  function spawn(initial) {
-    return {
-      x: Math.random() * w,
-      y: initial ? Math.random() * h : -16,
-      size: 12 + Math.random() * 8,            // velikost vykresleného lístku
-      frame: (Math.random() * FRAMES) | 0,     // která varianta lístku
-      vx: -0.5 + Math.random() * 1,
-      vy: 0.5 + Math.random() * 1.2,
-      rot: Math.random() * Math.PI * 2,
-      vrot: (Math.random() - 0.5) * 0.08,
-    };
+  // Umísti lístek do světa v pásu kolem kamery. atTop = nahoru nad výřez.
+  function place(l, cam, atTop) {
+    l.wx = cam.x + Math.random() * (W + 200) - 100;
+    l.wy = atTop ? cam.y - Math.random() * 60 - 16 : cam.y + Math.random() * H;
+    l.size = 12 + Math.random() * 8;
+    l.frame = (Math.random() * FRAMES) | 0;
+    l.vy = L.fallSpeed * (0.7 + Math.random() * 0.6);     // rychlost pádu
+    l.vx = (Math.random() - 0.5) * 2 * L.drift;           // unášení
+    l.sway = Math.random() * Math.PI * 2;                 // fáze kymácení
+    l.swaySpeed = 1 + Math.random() * 1.5;
+    l.swayAmp = L.swayAmp * (0.5 + Math.random() * 0.8);
+    l.rot = Math.random() * Math.PI * 2;
+    l.vrot = (Math.random() - 0.5) * 3;                   // rychlost rotace
+    return l;
   }
 
-  for (let i = 0; i < CONFIG.leaves.count; i++) leaves.push(spawn(true));
+  // Počáteční rozmístění (kamera ještě na 0,0).
+  const cam0 = { x: 0, y: 0 };
+  for (let i = 0; i < L.count; i++) leaves.push(place({}, cam0, false));
 
   return {
-    update(dtMs) {
-      const k = dtMs / 16;
+    update(dtMs, camera, player) {
+      const dt = dtMs / 1000;
+      // Střed postavy ve světě (pro rozhánění).
+      const pcx = player.x + player.width / 2;
+      const pcy = player.y - player.height / 2;
+
       for (const l of leaves) {
-        l.x += l.vx * k; l.y += l.vy * k; l.rot += l.vrot * k;
-        if (l.y > h + 16) Object.assign(l, spawn(false));
+        // Přirozený pád + kymácení.
+        l.sway += l.swaySpeed * dt;
+        l.wy += l.vy * dt;
+        l.wx += (l.vx + Math.cos(l.sway) * l.swayAmp) * dt;
+        l.rot += l.vrot * dt;
+
+        // Reakce na postavu — když je blízko, odstrč lístek pryč ("prorážení").
+        const dx = l.wx - pcx, dy = l.wy - pcy;
+        const dist = Math.hypot(dx, dy);
+        if (dist < L.pushRadius && dist > 0.01) {
+          const force = (1 - dist / L.pushRadius) * L.pushStrength;
+          l.wx += (dx / dist) * force * dt;
+          l.wy += (dy / dist) * force * dt;
+          l.rot += force * 0.01 * dt;
+        }
+
+        // Recyklace, když vypadne z pásu kolem kamery.
+        if (l.wy > camera.y + H + 20 ||
+            l.wx < camera.x - 120 ||
+            l.wx > camera.x + W + 120) {
+          place(l, camera, true);
+        }
       }
     },
-    draw(ctx) {
+
+    draw(ctx, camera) {
       if (!leafImage || !leafImage.complete) return;
       for (const l of leaves) {
+        const s = camera.worldToScreen(l.wx, l.wy);
         ctx.save();
-        ctx.translate(l.x, l.y);
+        ctx.translate(s.x, s.y);
         ctx.rotate(l.rot);
         ctx.drawImage(
           leafImage,
-          l.frame * FRAME, 0, FRAME, FRAME,        // výřez z spritesheetu
-          -l.size / 2, -l.size / 2, l.size, l.size, // kam na plátno
+          l.frame * FRAME, 0, FRAME, FRAME,
+          -l.size / 2, -l.size / 2, l.size, l.size,
         );
         ctx.restore();
       }
