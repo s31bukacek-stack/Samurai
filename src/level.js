@@ -8,17 +8,13 @@ export const LEVEL = {
   worldHeight: CONFIG.world.height,
   groundY,
 
-  // Malé schody (tenké plošiny z tilesetu, šířky = násobky 32px).
+  // Tenké plošiny (jen vrchní travnatá dlaždice), pořádně široké, šířky = násobky 32px.
   platforms: [
-    { x: 460,  y: groundY - 70,  width: 64 },
-    { x: 580,  y: groundY - 120, width: 64 },
-    { x: 700,  y: groundY - 170, width: 96 },
-    { x: 1000, y: groundY - 100, width: 96 },
-    { x: 1240, y: groundY - 160, width: 64 },
-    { x: 1450, y: groundY - 90,  width: 128 },
-    { x: 1720, y: groundY - 150, width: 64 },
-    { x: 1950, y: groundY - 110, width: 96 },
-    { x: 2200, y: groundY - 170, width: 64 },
-    { x: 2400, y: groundY - 90,  width: 96 },
+    { x: 460,  y: groundY - 90,  width: 224 },
+    { x: 820,  y: groundY - 150, width: 192 },
+    { x: 1150, y: groundY - 100, width: 256 },
+    { x: 1520, y: groundY - 160, width: 192 },
+    { x: 1850, y: groundY - 110, width: 224 },
+    { x: 2200, y: groundY - 150, width: 256 },
   ],
 };
