@@ -6,6 +6,7 @@ import { createCamera } from './camera.js';
 import { createPlayer } from './player.js';
 import { createInput } from './input.js';
 import { createLeaves } from './leaves.js';
+import { createEnemies } from './enemies.js';
 import { createRenderer } from './renderer.js';
 
 async function boot() {
@@ -18,9 +19,10 @@ async function boot() {
   const input = createInput(player);
   const camera = createCamera(CONFIG);
   const leaves = createLeaves(assets.leaf);
+  const enemies = createEnemies(assets.spirit);
   const renderer = createRenderer(ctx, assets);
 
-  const state = { camera, level: LEVEL, player, leaves };
+  const state = { camera, level: LEVEL, player, leaves, enemies };
 
   let last = performance.now();
   function loop(now) {
@@ -30,6 +32,7 @@ async function boot() {
     player.update(input.moveDirection(), dtMs, LEVEL, input.isAttackHeld());
     camera.follow(player, CONFIG.world);
     leaves.update(dtMs, camera, player);
+    enemies.update(dtMs, player);
     renderer.render(state, dtMs);
 
     requestAnimationFrame(loop);

@@ -41,6 +41,18 @@ export const CONFIG = {
     dirtTiles: [[6, 1], [7, 1]],   // tělo (nejhustší/nejmíň spár v sadě)
   },
 
+  // Nepřátelé — létající dušíci, neškodní, jen na odpálení mečem.
+  enemies: {
+    count: 5,
+    speed: 35,          // pomalý drift k hráči (px/s)
+    hoverHeight: 72,    // výška vznášení nad zemí
+    bobAmp: 14,         // amplituda houpání
+    hitReach: 74,       // dosah meče dopředu
+    hitV: 60,           // svislá tolerance zásahu
+    knockX: 430,        // odpal vodorovně
+    knockY: 360,        // odpal nahoru
+  },
+
   // Vizuální efekty.
   effects: {
     afterimage: { duration: 0.60, alpha: 0.40, fade: 0.9 },   // rozmazání při dvojitém skoku (delší ocas)

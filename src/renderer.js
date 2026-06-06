@@ -125,11 +125,12 @@ export function createRenderer(ctx, assets) {
 
   return {
     render(state, dtMs) {
-      const { camera, level, player, leaves } = state;
+      const { camera, level, player, leaves, enemies } = state;
       ctx.clearRect(0, 0, CONFIG.canvas.width, CONFIG.canvas.height);
       drawBackground(camera, level);
       drawGround(camera, level);
       drawPlatforms(camera, level);
+      enemies.draw(ctx, camera);
       drawPlayer(camera, player);
       drawFlag(camera, level, dtMs);
       leaves.draw(ctx, camera);
