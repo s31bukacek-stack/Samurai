@@ -7,7 +7,7 @@ export function createRenderer(ctx, assets) {
 
   function drawBackground(camera, level) {
     // Obloha — vyplní prostor nad scénou, když hráč vyskočí vysoko.
-    ctx.fillStyle = '#2b2b42';
+    ctx.fillStyle = '#2a2f4e';
     ctx.fillRect(0, 0, CONFIG.canvas.width, CONFIG.canvas.height);
 
     // Namalovaná scéna: povrch trávy v obrázku (surfaceFraction) ukotven na
