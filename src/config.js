@@ -48,6 +48,7 @@ export const CONFIG = {
     spawnDist: 540,     // z jaké dálky přiletují (kolem hráče, všechny strany)
     bobAmp: 6,          // jemné houpání
     hitRadius: 100,     // dosah seku kolem hráče
+    hitDot: 0.3,        // jak přesně musí dušík ležet ve směru seku (~±72°)
     knockSpeed: 620,    // rychlost odpálení ve zvoleném úhlu
     knockGravity: 240,  // mírná gravitace na odpálené (čistá, jen lehce klesající linka)
   },

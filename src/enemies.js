@@ -56,17 +56,24 @@ export function createEnemies(sprite) {
         e.wx += (dx / d) * cfg.speed * dt;
         e.wy += (dy / d) * cfg.speed * dt + Math.sin(e.bob) * cfg.bobAmp * dt;
 
-        // Sek → dušíky v dosahu odletí přesně ve ZVOLENÉM úhlu (myš).
+        // Sek zasáhne jen dušíky VE SMĚRU míření (ne ty na opačné straně)
+        // a odpálí je přesně ve zvoleném úhlu.
         if (player.isAttacking) {
           const rx = e.wx - c.x;
           const ry = e.wy - c.y;
-          if (Math.hypot(rx, ry) < cfg.hitRadius) {
-            e.knocked = true;
-            e.vx = player.attackAimX * cfg.knockSpeed;
-            e.vy = player.attackAimY * cfg.knockSpeed;
-            e.vrot = (player.attackAimX >= 0 ? 1 : -1) * 14;
-            e.life = 1.4;
-            deflected++;
+          const rd = Math.hypot(rx, ry);
+          if (rd < cfg.hitRadius) {
+            const nx = rd > 0.001 ? rx / rd : player.attackAimX;
+            const ny = rd > 0.001 ? ry / rd : player.attackAimY;
+            // je dušík ve směru seku? (jinak sek dolů nesmí trefit ty nad tebou)
+            if (nx * player.attackAimX + ny * player.attackAimY > cfg.hitDot) {
+              e.knocked = true;
+              e.vx = player.attackAimX * cfg.knockSpeed;
+              e.vy = player.attackAimY * cfg.knockSpeed;
+              e.vrot = (player.attackAimX >= 0 ? 1 : -1) * 14;
+              e.life = 1.4;
+              deflected++;
+            }
           }
         }
       }
