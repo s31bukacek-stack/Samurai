@@ -8,9 +8,9 @@ export function createInput(player, canvas) {
 
   function onKeyDown(e) {
     keys[e.code] = true;
-    if (e.code === 'Space') { e.preventDefault(); player.tryJump(); }
+    if (e.code === 'KeyW' || e.code === 'Space') { e.preventDefault(); player.tryJump(); }
     if (e.code.startsWith('Arrow')) e.preventDefault();
-    if (e.code === 'KeyA') player.attack();
+    if (e.code === 'KeyJ') player.attack();
   }
   function onKeyUp(e) { keys[e.code] = false; }
 
@@ -33,13 +33,13 @@ export function createInput(player, canvas) {
   return {
     keys,
     moveDirection() {
-      if (keys.ArrowLeft) return -1;
-      if (keys.ArrowRight) return 1;
+      if (keys.KeyA || keys.ArrowLeft) return -1;
+      if (keys.KeyD || keys.ArrowRight) return 1;
       return 0;
     },
-    isJumpHeld() { return !!keys.Space; },
-    // Klávesa A drží sek průběžně; myš seká jednorázově (klik = jeden mířený odraz).
-    isAttackHeld() { return !!keys.KeyA; },
+    isJumpHeld() { return !!(keys.KeyW || keys.Space); },
+    // Klávesa J drží sek průběžně; myš seká jednorázově (klik = jeden mířený odraz).
+    isAttackHeld() { return !!keys.KeyJ; },
     // Pozice myši na plátně (pro výpočet úhlu míření).
     mouse() { return { x: mouseX, y: mouseY, active: mouseActive }; },
   };
